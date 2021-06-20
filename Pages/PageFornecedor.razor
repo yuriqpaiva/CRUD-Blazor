@@ -1,0 +1,356 @@
+@page "/PageFornecedor";
+@using System.Text.RegularExpressions;
+@inject IJSRuntime JS;
+
+<h1 class="text-center bg-light p-3">Cadastro de Fornecedores</h1>
+<hr class="mb-3">
+
+<ul class="nav nav-tabs" id="TabPrincipal" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="tabLista" data-toggle="tab" href="#Lista" role="tab" aria-controls="home"
+            aria-selected="true">Listar Fornecedores</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link " id="tabForm" data-toggle="tab" href="#Formulario" role="tab" aria-controls="profile"
+            aria-selected="false">Cadastrar/Alterar</a>
+    </li>
+</ul>
+<div class="tab-content" id="ContentTabLista">
+    <div class="tab-pane fade show active" id="Lista" role="tabpanel" aria-labelledby="home-tab">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                    </th>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Razão Social
+                    </th>
+                    <th>
+                        CPF/CNPJ
+                    </th>
+                    <th>
+                        Telefone
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        CEP
+                    </th>
+                    <th>
+                        UF
+                    </th>
+                    <th>
+                        Situação
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Fornecedor item in Fornecedores)
+                {
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-primary" @onclick="() => SelecionarFornecedor(item)">
+                                <span class="oi oi-person" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                        <td>@item.FORID</td>
+                        <td>@item.FORNOMERAZAOSOCIAL</td>
+                        <td>@item.FORCPFCNPJ</td>
+                        <td>@item.FORTELEFONE</td>
+                        <td>@item.FOREMAIL</td>
+                        <td>@item.FORCEP</td>
+                        <td>@item.FORUF</td>
+                        <td>@item.FORATIVO</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" @onclick="() => ExcluirFornecedor(item)">
+                                <span class="oi oi-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="Formulario" role="tabpanel" aria-labelledby="profile-tab">
+        <div style="width: 800px;padding: 40px;">
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtNome" style="width:120px;">Razão Social</label>
+                <input type="text" id="txtNome" class="form-control" @bind="fornecedor.FORNOMERAZAOSOCIAL">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtEmail" style="width:120px;">Email</label>
+                <input type="text" id="txtEmail" class="form-control" @bind="fornecedor.FOREMAIL">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtNome" style="width:120px;">Inscrição Est.</label>
+                <input type="text" id="txtNome" class="form-control" @bind="fornecedor.FORINSCRICAOESTADUAL">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtCPF" style="width:120px;">CPF/CNPJ</label>
+                <input type="text" id="txtCPF" maxlength="14" class="form-control cnpj mr-3" @bind="fornecedor.FORCPFCNPJ">
+                <label class="input-group-text" for="txtTelefone" style="width:120px;">Telefone</label>
+                <input type="text" id="txtTelefone" class="form-control telefone" @bind="fornecedor.FORTELEFONE">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="Login" style="width:120px;">Endereço</label>
+                <input type="text" class="form-control mr-3" @bind="fornecedor.FORENDERECO">
+                <label class="input-group-text" style="width:120px;">Bairro</label>
+                <input type="text" id="txtSenha" class="form-control" @bind="fornecedor.FORBAIRRO">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="Login" style="width:120px;">Complemento</label>
+                <input type="text" class="form-control mr-3" @bind="fornecedor.FORCOMPLEMENTO">
+                <label class="input-group-text" for="txtSenha" style="width:120px;">CEP</label>
+                <input type="text" class="form-control cep" @bind="fornecedor.FORCEP">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="Login" style="width:120px;">Cidade</label>
+                <input type="text" class="form-control mr-3" @bind="fornecedor.FORCIDADE">
+                <label class="input-group-text" for="txtSenha" style="width:120px;">UF</label>
+                <input type="text" class="form-control uf" @bind="fornecedor.FORUF">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexCheckDefault" @bind="fornecedor.FORATIVO">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Ativo
+                </label>
+            </div>
+            <div style="text-align: left;" class="mt-4">
+                <input type="button" value="Gravar" class="btn btn-primary mr-2" @onclick="GravarFornecedor">
+                <input type="button" value="Cancelar" class="btn btn-warning" @onclick="CancelarAcao">
+            </div>
+            <br>
+            <div class="alert alert-danger" style="display: @MostrarMensagem;">
+                <strong>Atenção!</strong> Campos Obrigatórios: Nome, Email, CPF, CEP e UF.
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="ModalExclusao" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Confirma a Exclusão do Usuário</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" @onclick="ConfirmarExclusao">Sim</button>
+        <button type="button" class="btn btn-danger" @onclick="CancelarExclusao">Não</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="ModalCamposObrigatorios" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Campos Obrigatórios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>@MensagemErro</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="mt-5">
+
+
+
+@code {
+
+    public string MostrarMensagem = "none";
+
+    public string MensagemErro = "";
+
+    private IList<Fornecedor> Fornecedores = new List<Fornecedor>();
+
+    private Fornecedor fornecedor = new Fornecedor();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JS.InvokeAsync<string>("LoadPage", "");
+            StateHasChanged();
+        }
+    }
+
+    private void CarregarFornecedores()
+    {
+        Fornecedores = new FornecedorDAO().PegarFornecedores();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        CarregarFornecedores();
+    }
+
+    protected async Task ExcluirFornecedor(Fornecedor forn)
+    {
+        JS.InvokeAsync<string>("ShowModal", "ModalExclusao");
+        fornecedor = forn;
+        //new UsuarioDAO().ExcluirUsuario(usu);
+        //CarregarUsuarios();
+    }
+
+    public void ConfirmarExclusao()
+    {
+        if (fornecedor != null)
+        {
+            new FornecedorDAO().ExcluirFornecedor(fornecedor);
+            CarregarFornecedores();
+        }
+        JS.InvokeAsync<string>("HideModal", "ModalExclusao");
+        fornecedor = new Fornecedor();
+    }
+    public void CancelarExclusao()
+    {
+        fornecedor = new Fornecedor();
+        JS.InvokeAsync<string>("HideModal", "ModalExclusao");
+
+    }
+
+    protected async Task SelecionarFornecedor(Fornecedor forn)
+    {
+        fornecedor = forn;
+        JS.InvokeAsync<string>("ShowTab", "tabForm");
+    }
+
+    public void GravarFornecedor()
+    {
+        if (string.IsNullOrEmpty(fornecedor.FORNOMERAZAOSOCIAL) ||
+        string.IsNullOrEmpty(fornecedor.FOREMAIL) || 
+        string.IsNullOrEmpty(fornecedor.FORCPFCNPJ) || 
+        string.IsNullOrEmpty(fornecedor.FORCEP) ||
+        string.IsNullOrEmpty(fornecedor.FORUF)
+        )
+        {
+            MensagemErro = "Nome, Email, CPF/CNPJ, CEP e UF !";
+            JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+            //MostrarMensam = "block";
+        }
+        else
+        {
+            bool Validado = true;
+
+            //Valida Email edesgomes@gmail.com
+            if (!string.IsNullOrEmpty(fornecedor.FOREMAIL))
+            {
+                Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+                Match match = regex.Match(fornecedor.FOREMAIL);
+                if (!match.Success)//=false
+                {
+                    MensagemErro = "Email inválido!";
+                    JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+                    Validado = false;
+                }
+            }
+            if (!string.IsNullOrEmpty(fornecedor.FORCEP))
+            {
+                Regex regex = new Regex("[0-9]{8}");
+                Match match = regex.Match(fornecedor.FORCEP);
+                if (!match.Success)//=false
+                {
+                    MensagemErro = "CEP inválido!";
+                    JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+                    Validado = false;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(fornecedor.FORCPFCNPJ))
+            {
+                if (!IsCnpj(fornecedor.FORCPFCNPJ))
+                {
+                    MensagemErro = "CNPJ inválido!";
+                    JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+                    Validado = false;
+                }
+            }
+
+
+            if (Validado)
+            {
+                if (fornecedor.FORID > 0)
+                {
+                    new FornecedorDAO().AtualizarFornecedor(fornecedor);
+                }
+                else
+                {
+
+                    new FornecedorDAO().InserirFornecedor(fornecedor);
+
+                }
+
+                fornecedor = new Fornecedor();
+                CarregarFornecedores();
+                MostrarMensagem = "none";
+                JS.InvokeAsync<string>("ShowTab", "tabLista");
+
+            }
+        }
+    }
+
+    public void CancelarAcao()
+    {
+        fornecedor = new Fornecedor();
+        JS.InvokeAsync<string>("ShowTab", "tabLista");
+    }
+
+    public static bool IsCnpj(string cnpj)
+		{
+			int[] multiplicador1 = new int[12] {5,4,3,2,9,8,7,6,5,4,3,2};
+			int[] multiplicador2 = new int[13] {6,5,4,3,2,9,8,7,6,5,4,3,2};
+			int soma;
+			int resto;
+			string digito;
+			string tempCnpj;
+			cnpj = cnpj.Trim();
+			cnpj = cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
+			if (cnpj.Length != 14)
+			   return false;
+			tempCnpj = cnpj.Substring(0, 12);
+			soma = 0;
+			for(int i=0; i<12; i++)
+			   soma += int.Parse(tempCnpj[i].ToString()) * multiplicador1[i];
+			resto = (soma % 11);
+			if ( resto < 2)
+			   resto = 0;
+			else
+			   resto = 11 - resto;
+			digito = resto.ToString();
+			tempCnpj = tempCnpj + digito;
+			soma = 0;
+			for (int i = 0; i < 13; i++)
+			   soma += int.Parse(tempCnpj[i].ToString()) * multiplicador2[i];
+			resto = (soma % 11);
+			if (resto < 2)
+			    resto = 0;
+			else
+			   resto = 11 - resto;
+			digito = digito + resto.ToString();
+			return cnpj.EndsWith(digito);
+		}
+    
+
+}

@@ -1,0 +1,354 @@
+@page "/PageCliente";
+@using System.Text.RegularExpressions;
+@inject IJSRuntime JS;
+
+
+<h1 class="text-center bg-light p-3">Cadastro de Clientes</h1>
+<hr class="mb-3">
+
+<ul class="nav nav-tabs" id="TabPrincipal" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="tabLista" data-toggle="tab" href="#Lista" role="tab" aria-controls="home"
+            aria-selected="true">Listar Clientes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link " id="tabForm" data-toggle="tab" href="#Formulario" role="tab" aria-controls="profile"
+            aria-selected="false">Cadastrar/Alterar</a>
+    </li>
+</ul>
+<div class="tab-content" id="ContentTabLista">
+    <div class="tab-pane fade show active" id="Lista" role="tabpanel" aria-labelledby="home-tab">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                    </th>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Nome
+                    </th>
+                    <th>
+                        CPF
+                    </th>
+                    <th>
+                        Telefone
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        CEP
+                    </th>
+                    <th>
+                        UF
+                    </th>
+                    <th>
+                        Situação
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Cliente item in Clientes)
+                {
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-primary" @onclick="() => SelecionarCliente(item)">
+                                <span class="oi oi-person" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                        <td>@item.CLIID</td>
+                        <td>@item.CLINOME</td>
+                        <td>@item.CLICPF</td>
+                        <td>@item.CLITELEFONE</td>
+                        <td>@item.CLIEMAIL</td>
+                        <td>@item.CLICEP</td>
+                        <td>@item.CLIUF</td>
+                        <td>@item.CLIATIVO</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" @onclick="() => ExcluirCliente(item)">
+                                <span class="oi oi-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tab-pane fade" id="Formulario" role="tabpanel" aria-labelledby="profile-tab">
+        <div style="width: 800px;padding: 40px;">
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtNome" style="width:120px;">Nome</label>
+                <input type="text" id="txtNome" class="form-control" @bind="cliente.CLINOME">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtEmail" style="width:120px;">Email</label>
+                <input type="text" id="txtEmail" class="form-control" @bind="cliente.CLIEMAIL">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="txtCPF" style="width:120px;">CPF</label>
+                <input type="text" id="txtCPF" maxlength="14" class="form-control cpf mr-3" @bind="cliente.CLICPF">
+                <label class="input-group-text" for="txtTelefone" style="width:120px;">Telefone</label>
+                <input type="text" id="txtTelefone" class="form-control telefone" @bind="cliente.CLITELEFONE">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="Login" style="width:120px;">Endereço</label>
+                <input type="text" class="form-control mr-3" @bind="cliente.CLIENDERECO">
+                <label class="input-group-text" style="width:120px;">Bairro</label>
+                <input type="text" id="txtSenha" class="form-control" @bind="cliente.CLIBAIRRO">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="Login" style="width:120px;">Complemento</label>
+                <input type="text" class="form-control mr-3" @bind="cliente.CLICOMPLEMENTO">
+                <label class="input-group-text" for="txtSenha" style="width:120px;">CEP</label>
+                <input type="text" class="form-control cep" @bind="cliente.CLICEP">
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="Login" style="width:120px;">Cidade</label>
+                <input type="text" class="form-control mr-3" @bind="cliente.CLICIDADE">
+                <label class="input-group-text" for="txtSenha" style="width:120px;">UF</label>
+                <input type="text" class="form-control uf" @bind="cliente.CLIUF">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexCheckDefault" @bind="cliente.CLIATIVO">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Ativo
+                </label>
+            </div>
+            <div style="text-align: left;" class="mt-4">
+                <input type="button" value="Gravar" class="btn btn-primary mr-2" @onclick="GravarCliente">
+                <input type="button" value="Cancelar" class="btn btn-warning" @onclick="CancelarAcao">
+            </div>
+            <br>
+            <div class="alert alert-danger" style="display: @MostrarMensagem;">
+                <strong>Atenção!</strong> Campos Obrigatórios: Nome, Email, CPF, CEP e UF.
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="ModalExclusao" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmação</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Confirma a Exclusão do Usuário</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" @onclick="ConfirmarExclusao">Sim</button>
+        <button type="button" class="btn btn-danger" @onclick="CancelarExclusao">Não</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="ModalCamposObrigatorios" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Campos Obrigatórios</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>@MensagemErro</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="mt-5">
+
+@code {
+
+    public string MostrarMensagem = "none";
+
+    public string MensagemErro = "";
+
+    private IList<Cliente> Clientes = new List<Cliente>();
+
+    private Cliente cliente = new Cliente();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            JS.InvokeAsync<string>("LoadPage", "");
+            StateHasChanged();
+        }
+    }
+
+    private void CarregarClientes()
+    {
+        Clientes = new ClienteDAO().PegarClientes();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        CarregarClientes();
+    }
+
+    protected async Task ExcluirCliente(Cliente cli)
+    {
+        JS.InvokeAsync<string>("ShowModal", "ModalExclusao");
+        cliente = cli;
+        //new UsuarioDAO().ExcluirUsuario(usu);
+        //CarregarUsuarios();
+    }
+
+    public void ConfirmarExclusao()
+    {
+        if (cliente != null)
+        {
+            new ClienteDAO().ExcluirCliente(cliente);
+            CarregarClientes();
+        }
+        JS.InvokeAsync<string>("HideModal", "ModalExclusao");
+        cliente = new Cliente();
+    }
+    public void CancelarExclusao()
+    {
+        cliente = new Cliente();
+        JS.InvokeAsync<string>("HideModal", "ModalExclusao");
+
+    }
+
+    protected async Task SelecionarCliente(Cliente cli)
+    {
+        cliente = cli;
+        JS.InvokeAsync<string>("ShowTab", "tabForm");
+    }
+
+    public void GravarCliente()
+    {
+        if (string.IsNullOrEmpty(cliente.CLINOME) ||
+        string.IsNullOrEmpty(cliente.CLIEMAIL) || 
+        string.IsNullOrEmpty(cliente.CLICPF) || 
+        string.IsNullOrEmpty(cliente.CLICEP) ||
+        string.IsNullOrEmpty(cliente.CLIUF)
+        )
+        {
+            MensagemErro = "Nome, Email, CPF, CEP e UF !";
+            JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+            //MostrarMensam = "block";
+        }
+        else
+        {
+            bool Validado = true;
+
+            //Valida Email edesgomes@gmail.com
+            if (!string.IsNullOrEmpty(cliente.CLIEMAIL))
+            {
+                Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+                Match match = regex.Match(cliente.CLIEMAIL);
+                if (!match.Success)//=false
+                {
+                    MensagemErro = "Email inválido!";
+                    JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+                    Validado = false;
+                }
+            }
+            if (!string.IsNullOrEmpty(cliente.CLICEP))
+            {
+                Regex regex = new Regex("[0-9]{8}");
+                Match match = regex.Match(cliente.CLICEP);
+                if (!match.Success)//=false
+                {
+                    MensagemErro = "CEP inválido!";
+                    JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+                    Validado = false;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(cliente.CLICPF))
+            {
+                if (!IsCpf(cliente.CLICPF))
+                {
+                    MensagemErro = "CPF inválido!";
+                    JS.InvokeAsync<string>("ShowModal", "ModalCamposObrigatorios");
+                    Validado = false;
+                }
+            }
+
+
+            if (Validado)
+            {
+                if (cliente.CLIID > 0)
+                {
+                    new ClienteDAO().AtualizarCliente(cliente);
+                }
+                else
+                {
+                    cliente.CLIDATAHORAENTRADA = DateTime.Now;
+                    new ClienteDAO().InserirCliente(cliente);
+
+                }
+
+                cliente = new Cliente();
+                CarregarClientes();
+                MostrarMensagem = "none";
+                JS.InvokeAsync<string>("ShowTab", "tabLista");
+
+            }
+        }
+    }
+
+    public void CancelarAcao()
+    {
+        cliente = new Cliente();
+        JS.InvokeAsync<string>("ShowTab", "tabLista");
+    }
+
+    public static bool IsCpf(string cpf)
+    {
+        int[] multiplicador1 = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+        int[] multiplicador2 = new int[10] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+        string tempCpf;
+        string digito;
+        int soma;
+        int resto;
+        cpf = cpf.Trim();
+        cpf = cpf.Replace(".", "").Replace("-", "");
+        if (cpf.Length != 11)
+            return false;
+        tempCpf = cpf.Substring(0, 9);
+        soma = 0;
+
+        for (int i = 0; i < 9; i++)
+            soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
+        resto = soma % 11;
+        if (resto < 2)
+            resto = 0;
+        else
+            resto = 11 - resto;
+        digito = resto.ToString();
+        tempCpf = tempCpf + digito;
+        soma = 0;
+        for (int i = 0; i < 10; i++)
+            soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
+        resto = soma % 11;
+        if (resto < 2)
+            resto = 0;
+        else
+            resto = 11 - resto;
+        digito = digito + resto.ToString();
+        return cpf.EndsWith(digito);
+
+    }
+
+    
+
+}
