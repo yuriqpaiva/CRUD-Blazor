@@ -111,39 +111,6 @@
         }
       },
       {
-        "HashCode": 1304265131,
-        "Kind": "Components.Component",
-        "Name": "blazor_DB.Pages.PageUsuario",
-        "AssemblyName": "blazor_DB",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "PageUsuario"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "blazor_DB.Pages.PageUsuario"
-        }
-      },
-      {
-        "HashCode": 167237523,
-        "Kind": "Components.Component",
-        "Name": "blazor_DB.Pages.PageUsuario",
-        "AssemblyName": "blazor_DB",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "blazor_DB.Pages.PageUsuario"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "blazor_DB.Pages.PageUsuario",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
         "HashCode": 922767963,
         "Kind": "Components.Component",
         "Name": "blazor_DB.Pages.PageCliente",
@@ -206,6 +173,39 @@
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
           "Common.TypeName": "blazor_DB.Pages.PageFornecedor",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": 1304265131,
+        "Kind": "Components.Component",
+        "Name": "blazor_DB.Pages.PageUsuario",
+        "AssemblyName": "blazor_DB",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "PageUsuario"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "blazor_DB.Pages.PageUsuario"
+        }
+      },
+      {
+        "HashCode": 167237523,
+        "Kind": "Components.Component",
+        "Name": "blazor_DB.Pages.PageUsuario",
+        "AssemblyName": "blazor_DB",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "blazor_DB.Pages.PageUsuario"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "blazor_DB.Pages.PageUsuario",
           "Components.NameMatch": "Components.FullyQualifiedNameMatch"
         }
       },
@@ -16065,6 +16065,16 @@
       "FilePath": "/Volumes/HDD/macOs/Faculdade/Programação Web/blazor_DB/Pages/FetchData.razor",
       "TargetPath": "Pages\\FetchData.razor",
       "FileKind": "component"
+    },
+    {
+      "FilePath": "/Volumes/HDD/macOs/Faculdade/Programação Web/blazor_DB/Pages/_Host.cshtml",
+      "TargetPath": "Pages\\_Host.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "/Volumes/HDD/macOs/Faculdade/Programação Web/blazor_DB/Pages/Error.cshtml",
+      "TargetPath": "Pages\\Error.cshtml",
+      "FileKind": "mvc"
     },
     {
       "FilePath": "/Volumes/HDD/macOs/Faculdade/Programação Web/blazor_DB/Pages/Counter.razor",
